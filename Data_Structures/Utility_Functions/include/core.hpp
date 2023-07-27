@@ -2,7 +2,7 @@
 #define CUTE_CORE_HPP
 namespace cute {
     long long ceil(unsigned long long n, long long divisor)
-        {return n/divisor + bool(n % divisor);}
+        {return n/divisor + static_cast<int>(n % divisor != 0);}
 
     // allocates raw memory to the head with given <type> and <param>
     template<typename T>
