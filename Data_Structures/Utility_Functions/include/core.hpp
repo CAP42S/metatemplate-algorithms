@@ -4,10 +4,12 @@ namespace cute {
     long long ceil(unsigned long long n, long long divisor)
         {return n/divisor + bool(n % divisor);}
 
+    // allocates raw memory to the head with given <type> and <param>
     template<typename T>
     T* rawMemory(int n)
         {return (T*)::operator new(sizeof(T) * n);}
 
+    //
     void rawDelete(void* array)
         {::operator delete(array);}
 
