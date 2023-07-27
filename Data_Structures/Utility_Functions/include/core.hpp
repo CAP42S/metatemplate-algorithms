@@ -1,24 +1,28 @@
 #ifndef CUTE_CORE_HPP
 #define CUTE_CORE_HPP
+#include <cstdint>
 namespace cute {
-    long long ceil(unsigned long long n, long long divisor)
-        {return n/divisor + static_cast<int>(n % divisor != 0);}
 
-    // allocates raw memory to the head with given <type> and <param>
-    template<typename T>
-    T* rawMemory(int n)
-        {return (T*)::operator new(sizeof(T) * n);}
+    //empty struct. used for template types that are not necessary
+    struct empty {};
 
-    //
-    void rawDelete(void* array)
-        {::operator delete(array);}
-
-    template<typename T>
-    void rawDestruct(T* array, int size)
+    int64_t ceil(long long n)
     {
-        for(int i = 0; i < size; i++)
-            array[i].~T();
-        rawDelete(array);
+        uint8_t sign {n > 0};
+        int64_t whole_n {n};
+        return sign ?
+               (n > whole_n ? whole_n + 1 : whole_n) :
+               (n < whole_n ? whole_n - 1 : whole_n);
+    }
+
+    int64_t floor(long long n)
+        {return static_cast<int64_t>(n); }
+
+
+    template<typename T>
+    T& genericAssign(T& to, T const& rhs)
+    {
+
     }
 }
 #endif CUTE_CORE_HPP
