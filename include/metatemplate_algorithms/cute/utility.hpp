@@ -13,12 +13,16 @@ namespace cute {
     //empty struct. used for template types that are not necessary
     struct empty {};
 
-    template<typename T>
-    using has_assign_op = decltype(std::declval<T&>() = std::declval<T const&>());
+
+    namespace details {
+        template<typename T>
+        using has_assign_op =
+                decltype(std::declval<T &>() = std::declval<T const &>());
+    }
 
     template<typename T>
     struct has_assign_operator : std::integral_constant<bool,
-                                                    !std::is_void<has_assign_op<T>>::value> {};
+            !std::is_void<details::has_assign_op<T>>::value> {};
 
     int64_t ceil(long long n)
     {
@@ -29,19 +33,22 @@ namespace cute {
                (n < whole_n ? whole_n - 1 : whole_n);
     }
 
-    int64_t floor(long long n)
+    inline int64_t floor(long long n)
         {return static_cast<int64_t>(n); }
 
 
     template<typename T>
-    std::enable_if_t<!has_assign_op<T>::value, T&>
-    T& genericAssign(T& to, T&& rhs)
+    inline std::enable_if_t<!has_assign_operator<T>::value, T&>
+    genericAssign(T& to, T&& rhs)
+        {return  to = std::move(rhs);}
+
+    template<typename T>
+    auto genericAssign(T& to, T&& rhs) -> std::enable_if_t<!has_assign_operator<T>::value, T&>
     {
         auto old = std::exchange(to, std::forward<T>(rhs));
         if(&old != &rhs)
-        {
-            std::exchange(to,old);
-        }
+            std::exchange(to, old);
+        return to;
     }
 }
 #endif CUTE_CORE_HPP
